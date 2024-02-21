@@ -7,6 +7,7 @@ if not cap.isOpened():
     exit()
 
 while True:
+    e1 = cv.getTickCount() #used for tracking performance
     ret, frame = cap.read() #Capture one frame of the webcam, its a jpg image
     
     cv.imshow('Camera View', frame) #display the image onto a window
@@ -14,7 +15,9 @@ while True:
 
     if cv.waitKey(1) == ord('q'): #press "q" to quit the program
         break
-
+    e2 = cv.getTickCount() #used for tracking performance
+    time_running = (e2 - e1) / cv.getTickFrequency()
+    print(time_running)
 
 cap.release()
 cv.destroyAllWindows() #stops recording and deletes all windows
