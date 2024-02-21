@@ -3,9 +3,9 @@ import numpy as np
 
 cap = cv.VideoCapture(0) #Create a video capture instance, for the webcam
 #Camera configuration
-cap.set(cv.CAP_PROP_AUTO_WB, 0.25)
+cap.set(cv.CAP_PROP_AUTO_WB, 0.00)
 cap.set(cv.CAP_PROP_SATURATION, 3.00)
-
+cap.set(cv.CAP_PROP_BRIGHTNESS, -1000.00)
 
 if not cap.isOpened():
     print("Cannot open camera") #prints an error if couldnt open the camera
