@@ -14,6 +14,8 @@ if __name__ == "__main__":
     cap = cv.VideoCapture(args.cam_id) 
     
     #Camera configuration
+    # Disable White balance
+    cap.set(cv.CAP_PROP_AUTO_WB, 0.25)
     # Disable auto exposure
     cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25)
     # Set exposure time
@@ -24,34 +26,38 @@ if __name__ == "__main__":
         print("Cannot open camera") #prints an error if couldnt open the camera
         exit()
 
+    
+    print("Starting detection at: " + time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(time.time())))
+    start_time = time.time()
     ret, last_frame = cap.read()
 
     while True:
         e1 = cv.getTickCount() #used for tracking performance
         ret, frame = cap.read() #Capture one frame of the webcam, its a jpg image
 
+        gain = 1
+        last_frame = frame.copy() * gain + last_frame.copy()    
+
         cv.imshow('Exposed Frames', last_frame) 
-
-        # Calcular la diferencia entre el frame actual y el anterior
-        diff = frame - last_frame
-
-        last_frame = frame.copy() * 10000 + last_frame.copy()    
+        cv.imshow('Sensor View', frame)
 
 
         key  = cv.waitKey(1)
         if key == ord('q'): #press "q" to quit the program
             break
         elif key == ord('s'): #press "s" to save capture of the current image screen
-            # convert to DD-MM-YYYY HH:MM:SS:MS
+            # convert to DD-MM-YYYY HH:MM:SS
             current_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(time.time()))
             # Save the frame
             print("Saving frame" + current_time + ".png")
             cv.imwrite('frame_' + current_time + '_.png', frame)
-        elif key == ord('c'):
-            cap.set(cv.CAP_PROP_SETTINGS, 1)
+        elif key == ord('t'):
+            # Prints the time the code has been running for
+            print("The code has been running for: " + time.strftime('%H:%M:%S', time.gmtime(time.time() - start_time)))
+
         e2 = cv.getTickCount() #used for tracking performance
         time_running = (e2 - e1) / cv.getTickFrequency()
         print(time_running)
-
+        
     cap.release()
     cv.destroyAllWindows() #stops recording and deletes all windows
