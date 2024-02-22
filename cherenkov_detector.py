@@ -10,18 +10,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-
-    cap = cv.VideoCapture(args.cam_id) #Create a video capture instance, for the webcam
+    #Create a video capture instance, for the webcam, use argument parsed from command line as camera index
+    cap = cv.VideoCapture(args.cam_id) 
+    
     #Camera configuration
-    # cap.set(cv.CAP_PROP_AUTO_WB, 0.00)
-    # cap.set(cv.CAP_PROP_SATURATION, 3.00)
-    # cap.set(cv.CAP_PROP_BRIGHTNESS, -1000.00)
     # Disable auto exposure
     cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25)
     # Set exposure time
     cap.set(cv.CAP_PROP_EXPOSURE, 0.01)
-    # Set fps
-    # cap.set(cv.CAP_PROP_FPS, 30)
 
 
     if not cap.isOpened():
@@ -39,22 +35,20 @@ if __name__ == "__main__":
         # Calcular la diferencia entre el frame actual y el anterior
         diff = frame - last_frame
 
-        # Convertir a escala de grises
-        gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY)
+        last_frame = frame.copy() * 10000 + last_frame.copy()    
 
-        cv.imshow('Diff', gray)
-
-        last_frame = frame.copy() * 10000 + last_frame.copy()
 
         key  = cv.waitKey(1)
         if key == ord('q'): #press "q" to quit the program
             break
-        elif key == ord('s'): #press "q" to quit the program
+        elif key == ord('s'): #press "s" to save capture of the current image screen
             # convert to DD-MM-YYYY HH:MM:SS:MS
             current_time = time.strftime('%d-%m-%Y %H:%M:%S', time.localtime(time.time()))
             # Save the frame
             print("Saving frame" + current_time + ".png")
             cv.imwrite('frame_' + current_time + '_.png', frame)
+        elif key == ord('c'):
+            cap.set(cv.CAP_PROP_SETTINGS, 1)
         e2 = cv.getTickCount() #used for tracking performance
         time_running = (e2 - e1) / cv.getTickFrequency()
         print(time_running)
